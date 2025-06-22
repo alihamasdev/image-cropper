@@ -1,0 +1,1 @@
+Crop and Resize images according to desired width, height and aspect ratio

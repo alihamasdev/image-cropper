@@ -13,7 +13,7 @@ const geistSans = Geist({
 
 export const metadata: Metadata = {
 	title: "Image Cropper",
-	description: "Crop image according to desired width, height and aspect ration"
+	description: "Crop and Resize images according to desired width, height and aspect ratio"
 };
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
