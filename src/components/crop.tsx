@@ -16,22 +16,20 @@ export function Crop() {
 
 	return (
 		<Fragment>
-			<section className="w-full">
-				<div
-					onClick={openFileDialog}
-					onDrop={handleDrop}
-					onDragEnter={handleDragEnter}
-					onDragLeave={handleDragLeave}
-					onDragOver={handleDragOver}
-					data-dragging={isDragging || undefined}
-					data-files={files.length > 0 || undefined}
-					className="border-input data-[dragging=true]:bg-accent/50 hover:bg-accent/50 relative flex cursor-pointer items-center justify-center overflow-hidden rounded-xl border border-dashed transition-colors"
-				>
-					<input {...getInputProps()} className="sr-only" aria-label="Upload image file" />
-					<div className="flex flex-col items-center gap-2 p-8">
-						<UploadIcon width={20} height={20} />
-						<p className="text-sm font-medium">Drop your image here or Click to upload</p>
-					</div>
+			<section
+				onClick={openFileDialog}
+				onDrop={handleDrop}
+				onDragEnter={handleDragEnter}
+				onDragLeave={handleDragLeave}
+				onDragOver={handleDragOver}
+				data-dragging={isDragging || undefined}
+				data-files={files.length > 0 || undefined}
+				className="border-input data-[dragging=true]:bg-accent/50 hover:bg-accent/50 relative flex cursor-pointer items-center justify-center overflow-hidden rounded-xl border border-dashed transition-colors"
+			>
+				<input {...getInputProps()} className="sr-only" aria-label="Upload image file" />
+				<div className="flex flex-col items-center gap-2 p-8">
+					<UploadIcon className="size-5" />
+					<p className="text-center text-sm font-medium">Drop your image here or Click to upload</p>
 				</div>
 			</section>
 

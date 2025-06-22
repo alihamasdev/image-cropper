@@ -3,14 +3,23 @@ import { ThemeToggle } from "@/components/theme-button";
 
 export default function HomePage() {
 	return (
-		<main className="relative container mx-auto min-h-dvh w-full px-5 pt-10 pb-30">
-			<header className="flex w-full items-center justify-between">
-				<h1 className="text-center text-4xl font-bold tracking-tight text-balance">Image Cropper</h1>
+		<main className="flex min-h-dvh w-full flex-col">
+			<header className="container mx-auto flex w-full items-center justify-between px-4 py-8">
+				<h1 className="text-center text-2xl font-bold tracking-tight text-balance md:text-3xl lg:text-4xl">
+					Image Cropper
+				</h1>
 				<ThemeToggle />
 			</header>
-			<div className="mt-12 w-full">
+
+			<div className="container mx-auto my-10 w-full space-y-10 px-4">
 				<Crop />
 			</div>
+
+			<footer className="mt-auto border-t py-8">
+				<div className="container mx-auto flex items-center justify-between px-4">
+					<div className="flex items-center gap-x-2">&#169; 2025 Ali Hamas, Inc.</div>
+				</div>
+			</footer>
 		</main>
 	);
 }
