@@ -57,7 +57,7 @@ export function FinalResult({
 						width={outputWidth}
 						height={outputHeight}
 						alt={imageName}
-						className="size-full object-fill object-center"
+						className="size-full object-cover object-center"
 					/>
 				</div>
 				<div className="space-y-4 p-4 lg:px-8 lg:py-6">

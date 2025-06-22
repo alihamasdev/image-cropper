@@ -12,41 +12,53 @@ import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { FinalResult } from "@/components/final-result";
 
-export function EditImage({ preview, file }: { preview: string; file: File | FileMetadata }) {
+export function EditImage({
+	preview,
+	file,
+	...props
+}: React.ComponentProps<typeof Card> & { preview: string; file: File | FileMetadata }) {
 	const [croppedFile, setCroppedFile] = useState<File | null>(null);
 	const [croppedAreaPixels, setCroppedAreaPixels] = useState<Area | null>(null);
 	const [aspectRatio, setAspectRatio] = useState<number>(1 / 1);
-	const [outputSize, setOutputSize] = useState<{ width: number; height: number } | null>(null);
+	const [outputWidth, setOutputWidth] = useState<number | null>(null);
+	const [outputHeight, setOutputHeight] = useState<number | null>(null);
 
 	const finalResultRef = useRef<HTMLDivElement>(null);
 	const [isPending, startTransition] = useTransition();
 
 	useEffect(() => {
 		if (!isPending && croppedFile && finalResultRef.current) {
-			finalResultRef.current.scrollIntoView({ behavior: "smooth" });
+			finalResultRef.current.scrollIntoView({ behavior: "smooth", block: "center" });
 		}
 	}, [croppedFile, isPending]);
+
+	useEffect(() => {
+		setCroppedFile(null);
+	}, [outputWidth, outputHeight, aspectRatio]);
+
+	useEffect(() => {
+		setCroppedFile(null);
+	}, [croppedAreaPixels]);
 
 	const handleCropChange = useCallback((pixels: Area | null) => {
 		setCroppedAreaPixels(pixels);
 	}, []);
 
 	const handleAspectRatioChange = (value: number) => {
-		setCroppedFile(null);
 		setAspectRatio(value);
-		setOutputSize((prev) => (prev ? { width: prev.width, height: Math.round(prev.width / value) } : null));
+		if (outputWidth) {
+			setOutputHeight(Math.round(outputWidth / value));
+		}
 	};
 
 	const handleOutputSizeChange = (value: number, valueFor: "width" | "height") => {
-		setCroppedFile(null);
 		if (valueFor === "width") {
-			setOutputSize({ width: value, height: Math.round(value / aspectRatio) });
+			setOutputWidth(value);
+			setOutputHeight(Math.round(value / aspectRatio));
 		} else {
-			setOutputSize({ height: value, width: Math.round(value * aspectRatio) });
+			setOutputHeight(value);
+			setOutputWidth(Math.round(value * aspectRatio));
 		}
-		// if (value < 1) {
-		// 	setOutputSize(undefined);
-		// }
 	};
 
 	const handleCrop = () => {
@@ -56,8 +68,8 @@ export function EditImage({ preview, file }: { preview: string; file: File | Fil
 			const croppedBlob = await getCroppedImg(
 				preview,
 				croppedAreaPixels,
-				outputSize?.width || croppedAreaPixels.width,
-				outputSize?.height || croppedAreaPixels.height
+				outputWidth || croppedAreaPixels.width,
+				outputHeight || croppedAreaPixels.height
 			);
 			if (!croppedBlob) return;
 
@@ -68,7 +80,7 @@ export function EditImage({ preview, file }: { preview: string; file: File | Fil
 
 	return (
 		<Fragment>
-			<Card className="relative h-[65dvh] overflow-hidden rounded-xl border">
+			<Card className="relative h-[95dvh] overflow-hidden rounded-xl border" {...props}>
 				<Cropper
 					className="h-full"
 					aspectRatio={Number(aspectRatio)}
@@ -82,8 +94,12 @@ export function EditImage({ preview, file }: { preview: string; file: File | Fil
 				</Cropper>
 				<CardFooter className="grid grid-cols-1 gap-x-6 gap-y-4 p-4 md:grid-cols-2 lg:grid-cols-4">
 					<div className="space-y-2">
-						<Label>Aspect Ratio</Label>
-						<Select defaultValue={`${aspectRatio}`} onValueChange={(value) => handleAspectRatioChange(Number(value))}>
+						<Label htmlFor="aspect-ratio">Aspect Ratio</Label>
+						<Select
+							defaultValue={`${aspectRatio}`}
+							onValueChange={(value) => handleAspectRatioChange(Number(value))}
+							disabled={isPending}
+						>
 							<SelectTrigger className="w-full">
 								<SelectValue />
 							</SelectTrigger>
@@ -97,37 +113,41 @@ export function EditImage({ preview, file }: { preview: string; file: File | Fil
 						</Select>
 					</div>
 					<div className="space-y-2">
-						<Label>Output Width</Label>
+						<Label htmlFor="width">Output Width</Label>
 						<Input
 							name="width"
+							id="width"
 							type="number"
 							placeholder="Auto"
-							value={outputSize?.width}
+							disabled={isPending}
+							value={outputWidth || undefined}
 							onChange={(e) => handleOutputSizeChange(Number(e.target.value), "width")}
 						/>
 					</div>
 					<div className="space-y-2">
-						<Label>Output Height</Label>
+						<Label htmlFor="height">Output Height</Label>
 						<Input
 							name="height"
+							id="height"
 							type="number"
 							placeholder="Auto"
-							value={outputSize?.height}
+							disabled={isPending}
+							value={outputHeight || undefined}
 							onChange={(e) => handleOutputSizeChange(Number(e.target.value), "height")}
 						/>
 					</div>
 					<Button className="mt-auto" onClick={handleCrop} disabled={isPending || !croppedAreaPixels}>
-						Crop Image
+						{isPending ? "Cropping..." : "Crop Image"}
 					</Button>
 				</CardFooter>
 			</Card>
 
-			{!isPending && croppedFile && (
+			{croppedFile && (
 				<FinalResult
-					croppedFile={croppedFile}
-					outputWidth={outputSize?.width || croppedAreaPixels?.width}
-					outputHeight={outputSize?.height || croppedAreaPixels?.height}
 					ref={finalResultRef}
+					croppedFile={croppedFile}
+					outputWidth={outputWidth || croppedAreaPixels?.width}
+					outputHeight={outputHeight || croppedAreaPixels?.height}
 				/>
 			)}
 		</Fragment>
