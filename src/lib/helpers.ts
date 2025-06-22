@@ -39,28 +39,11 @@ export async function getCroppedImg(
 }
 
 export const aspectRatioList = [
-	{
-		label: "1 / 1 (Square)",
-		value: 1 / 1
-	},
-	{
-		label: "3 / 2 (Photography)",
-		value: 3 / 2
-	},
-	{
-		label: "4 / 3 (Standard)",
-		value: 4 / 3
-	},
-	{
-		label: "9 / 16 (Potrait)",
-		value: 9 / 16
-	},
-	{
-		label: "16 / 9 (Landscape)",
-		value: 16 / 9
-	},
-	{
-		label: "21 / 9 (Ultrawide)",
-		value: 21 / 9
-	}
+	{ label: "1 : 1", value: 1 / 1 },
+	{ label: "2 : 3", value: 2 / 3 },
+	{ label: "3 : 2", value: 3 / 2 },
+	{ label: "4 : 3", value: 4 / 3 },
+	{ label: "9 : 16", value: 9 / 16 },
+	{ label: "16 : 9", value: 16 / 9 },
+	{ label: "21 : 9", value: 21 / 9 }
 ];

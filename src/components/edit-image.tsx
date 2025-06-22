@@ -1,6 +1,6 @@
 "use client";
 
-import { Fragment, useCallback, useState, useTransition } from "react";
+import { Fragment, useCallback, useEffect, useRef, useState, useTransition } from "react";
 
 import { aspectRatioList, getCroppedImg, type Area } from "@/lib/helpers";
 import { type FileMetadata } from "@/hooks/use-file-upload";
@@ -10,19 +10,44 @@ import { Cropper, CropperCropArea, CropperDescription, CropperImage } from "@/co
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { FinalResult } from "@/components/final-result";
 
 export function EditImage({ preview, file }: { preview: string; file: File | FileMetadata }) {
 	const [croppedFile, setCroppedFile] = useState<File | null>(null);
 	const [croppedAreaPixels, setCroppedAreaPixels] = useState<Area | null>(null);
 	const [aspectRatio, setAspectRatio] = useState<number>(1 / 1);
-	const [outputWidth, setOutputWidth] = useState<number | undefined>(undefined);
-	const [outputHeight, setOutputHeight] = useState<number | undefined>(undefined);
+	const [outputSize, setOutputSize] = useState<{ width: number; height: number } | null>(null);
 
+	const finalResultRef = useRef<HTMLDivElement>(null);
 	const [isPending, startTransition] = useTransition();
+
+	useEffect(() => {
+		if (!isPending && croppedFile && finalResultRef.current) {
+			finalResultRef.current.scrollIntoView({ behavior: "smooth" });
+		}
+	}, [croppedFile, isPending]);
 
 	const handleCropChange = useCallback((pixels: Area | null) => {
 		setCroppedAreaPixels(pixels);
 	}, []);
+
+	const handleAspectRatioChange = (value: number) => {
+		setCroppedFile(null);
+		setAspectRatio(value);
+		setOutputSize((prev) => (prev ? { width: prev.width, height: Math.round(prev.width / value) } : null));
+	};
+
+	const handleOutputSizeChange = (value: number, valueFor: "width" | "height") => {
+		setCroppedFile(null);
+		if (valueFor === "width") {
+			setOutputSize({ width: value, height: Math.round(value / aspectRatio) });
+		} else {
+			setOutputSize({ height: value, width: Math.round(value * aspectRatio) });
+		}
+		// if (value < 1) {
+		// 	setOutputSize(undefined);
+		// }
+	};
 
 	const handleCrop = () => {
 		startTransition(async () => {
@@ -31,8 +56,8 @@ export function EditImage({ preview, file }: { preview: string; file: File | Fil
 			const croppedBlob = await getCroppedImg(
 				preview,
 				croppedAreaPixels,
-				outputWidth || croppedAreaPixels.width,
-				outputHeight || croppedAreaPixels.height
+				outputSize?.width || croppedAreaPixels.width,
+				outputSize?.height || croppedAreaPixels.height
 			);
 			if (!croppedBlob) return;
 
@@ -43,7 +68,7 @@ export function EditImage({ preview, file }: { preview: string; file: File | Fil
 
 	return (
 		<Fragment>
-			<Card className="mt-12 h-[65dvh] overflow-hidden rounded-xl border">
+			<Card className="relative h-[65dvh] overflow-hidden rounded-xl border">
 				<Cropper
 					className="h-full"
 					aspectRatio={Number(aspectRatio)}
@@ -55,19 +80,10 @@ export function EditImage({ preview, file }: { preview: string; file: File | Fil
 					<CropperCropArea />
 					<CropperDescription />
 				</Cropper>
-				<CardFooter className="grid grid-cols-1 gap-x-6 gap-y-4 p-4 lg:grid-cols-4">
+				<CardFooter className="grid grid-cols-1 gap-x-6 gap-y-4 p-4 md:grid-cols-2 lg:grid-cols-4">
 					<div className="space-y-2">
 						<Label>Aspect Ratio</Label>
-						<Select
-							defaultValue={`${aspectRatio}`}
-							onValueChange={(value) => {
-								const aspectRatioValue = Number(value);
-								setAspectRatio(aspectRatioValue);
-								if (outputWidth) {
-									setOutputHeight(Math.round(outputWidth / aspectRatioValue));
-								}
-							}}
-						>
+						<Select defaultValue={`${aspectRatio}`} onValueChange={(value) => handleAspectRatioChange(Number(value))}>
 							<SelectTrigger className="w-full">
 								<SelectValue />
 							</SelectTrigger>
@@ -83,29 +99,21 @@ export function EditImage({ preview, file }: { preview: string; file: File | Fil
 					<div className="space-y-2">
 						<Label>Output Width</Label>
 						<Input
+							name="width"
 							type="number"
 							placeholder="Auto"
-							value={outputWidth || undefined}
-							onChange={(e) => {
-								const width = Number(e.target.value);
-								setOutputWidth(width);
-								setOutputHeight(Math.round(width / aspectRatio));
-								return width;
-							}}
+							value={outputSize?.width}
+							onChange={(e) => handleOutputSizeChange(Number(e.target.value), "width")}
 						/>
 					</div>
 					<div className="space-y-2">
 						<Label>Output Height</Label>
 						<Input
+							name="height"
 							type="number"
 							placeholder="Auto"
-							value={outputHeight || undefined}
-							onChange={(e) => {
-								const height = Number(e.target.value);
-								setOutputHeight(height);
-								setOutputWidth(Math.round(height * aspectRatio));
-								return height;
-							}}
+							value={outputSize?.height}
+							onChange={(e) => handleOutputSizeChange(Number(e.target.value), "height")}
 						/>
 					</div>
 					<Button className="mt-auto" onClick={handleCrop} disabled={isPending || !croppedAreaPixels}>
@@ -113,6 +121,15 @@ export function EditImage({ preview, file }: { preview: string; file: File | Fil
 					</Button>
 				</CardFooter>
 			</Card>
+
+			{!isPending && croppedFile && (
+				<FinalResult
+					croppedFile={croppedFile}
+					outputWidth={outputSize?.width || croppedAreaPixels?.width}
+					outputHeight={outputSize?.height || croppedAreaPixels?.height}
+					ref={finalResultRef}
+				/>
+			)}
 		</Fragment>
 	);
 }
