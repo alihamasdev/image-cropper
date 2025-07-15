@@ -12,8 +12,8 @@ const geistSans = Geist({
 });
 
 export const metadata: Metadata = {
-	title: "Image Cropper",
-	description: "Crop and Resize images according to desired width, height and aspect ratio"
+	title: "Image Cropper & Resizer | Ali Hamas",
+	description: "Crop and Resize images according to desired width, height, aspect-ratio and file format"
 };
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
