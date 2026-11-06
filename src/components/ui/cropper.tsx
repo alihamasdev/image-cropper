@@ -1,8 +1,7 @@
 "use client";
 
 import { Cropper as CropperPrimitive } from "@origin-space/image-cropper";
-
-import { cn } from "@/lib/utils";
+import { cn } from "cn";
 
 function Cropper({ className, ...props }: React.ComponentProps<typeof CropperPrimitive.Root>) {
 	return (
@@ -10,7 +9,7 @@ function Cropper({ className, ...props }: React.ComponentProps<typeof CropperPri
 			data-slot="cropper"
 			className={cn(
 				"relative flex w-full cursor-move touch-none items-center justify-center overflow-hidden focus:outline-none",
-				className
+				className,
 			)}
 			{...props}
 		/>
@@ -18,9 +17,7 @@ function Cropper({ className, ...props }: React.ComponentProps<typeof CropperPri
 }
 
 function CropperDescription({ className, ...props }: React.ComponentProps<typeof CropperPrimitive.Description>) {
-	return (
-		<CropperPrimitive.Description data-slot="cropper-description" className={cn("sr-only", className)} {...props} />
-	);
+	return <CropperPrimitive.Description data-slot="cropper-description" className={cn("sr-only", className)} {...props} />;
 }
 
 function CropperImage({ className, ...props }: React.ComponentProps<typeof CropperPrimitive.Image>) {
@@ -37,11 +34,7 @@ function CropperCropArea({ className, ...props }: React.ComponentProps<typeof Cr
 	return (
 		<CropperPrimitive.CropArea
 			data-slot="cropper-crop-area"
-			className={cn(
-				"pointer-events-none absolute border-4 border-blue-600",
-				"shadow-[0_0_0_9999px_rgba(0,0,0,0.7)]",
-				className
-			)}
+			className={cn("pointer-events-none absolute border-4 border-blue-600", "shadow-[0_0_0_9999px_rgba(0,0,0,0.7)]", className)}
 			{...props}
 		/>
 	);

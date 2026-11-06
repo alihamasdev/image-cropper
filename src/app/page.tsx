@@ -15,7 +15,7 @@ export default function HomePage() {
 
 			<footer className="mt-auto border-t py-8">
 				<div className="container mx-auto flex items-center justify-between px-4">
-					<p className="text-muted-foreground text-sm">&#169; 2025 Ali Hamas, Inc.</p>
+					<p className="text-sm text-muted-foreground">&#169; 2025 Ali Hamas, Inc.</p>
 				</div>
 			</footer>
 		</main>

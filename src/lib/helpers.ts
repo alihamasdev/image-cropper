@@ -15,7 +15,7 @@ export async function getCroppedImg(
 	imageSrc: string,
 	pixelCrop: Area,
 	outputWidth: number = pixelCrop.width,
-	outputHeight: number = pixelCrop.height
+	outputHeight: number = pixelCrop.height,
 ): Promise<Blob | null> {
 	try {
 		const image = await createImage(imageSrc);
@@ -46,5 +46,5 @@ export const aspectRatioList = [
 	{ label: "4 : 3", value: 4 / 3 },
 	{ label: "9 : 16", value: 9 / 16 },
 	{ label: "16 : 9", value: 16 / 9 },
-	{ label: "21 : 9", value: 21 / 9 }
+	{ label: "21 : 9", value: 21 / 9 },
 ];

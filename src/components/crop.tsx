@@ -1,17 +1,15 @@
 "use client";
 
-import { Fragment, useEffect, useRef, useState } from "react";
+import { cn } from "cn";
 import { UploadIcon } from "lucide-react";
+import { Fragment, useEffect, useRef, useState } from "react";
 
-import { cn } from "@/lib/utils";
-import { useFileUpload, type FileWithPreview } from "@/hooks/use-file-upload";
 import { EditImage } from "@/components/edit-image";
+import { useFileUpload, type FileWithPreview } from "@/hooks/use-file-upload";
 
 export function Crop() {
-	const [
-		{ files, isDragging },
-		{ handleDragEnter, handleDragLeave, handleDragOver, handleDrop, openFileDialog, getInputProps }
-	] = useFileUpload({ accept: "image/png,image/jpeg,image/jpg,image/gif,image/webp", maxFiles: 1 });
+	const [{ files, isDragging }, { handleDragEnter, handleDragLeave, handleDragOver, handleDrop, openFileDialog, getInputProps }] =
+		useFileUpload({ accept: "image/png,image/jpeg,image/jpg,image/gif,image/webp", maxFiles: 1 });
 
 	const [file, setFile] = useState<FileWithPreview | null>(files[0] || null);
 
@@ -38,8 +36,8 @@ export function Crop() {
 				data-dragging={isDragging || undefined}
 				data-files={files.length > 0 || undefined}
 				className={cn(
-					"border-input data-[dragging=true]:bg-accent/50 hover:bg-accent/50 relative flex cursor-pointer items-center justify-center overflow-hidden rounded-xl border border-dashed transition-colors",
-					file ? "h-30" : "h-[65dvh]"
+					"relative flex cursor-pointer items-center justify-center overflow-hidden rounded-xl border border-dashed border-input transition-colors hover:bg-accent/50 data-[dragging=true]:bg-accent/50",
+					file ? "h-30" : "h-[65dvh]",
 				)}
 			>
 				<input {...getInputProps()} className="sr-only" aria-label="Upload image file" />

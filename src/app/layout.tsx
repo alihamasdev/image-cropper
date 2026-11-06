@@ -1,19 +1,18 @@
+import "@/styles/globals.css";
 import { type Metadata } from "next";
 import { Geist } from "next/font/google";
 
-import "./globals.css";
-
-import { ThemeProvider } from "@/lib/theme-provider";
 import { Toaster } from "@/components/ui/sonner";
+import { ThemeProvider } from "@/lib/theme-provider";
 
 const geistSans = Geist({
 	variable: "--font-geist-sans",
-	subsets: ["latin"]
+	subsets: ["latin"],
 });
 
 export const metadata: Metadata = {
 	title: "Image Cropper & Resizer | Ali Hamas",
-	description: "Crop and Resize images according to desired width, height, aspect-ratio and file format"
+	description: "Crop and Resize images according to desired width, height, aspect-ratio and file format",
 };
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
